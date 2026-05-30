@@ -6,8 +6,10 @@ Extraído del GDD v4.0 (mayo 2025). Referencia completa: `.ai/GDD_Echo_Bat_v4.do
 
 ---
 
-## Fase 0 — Prototipo base (~25 h)
-*Objetivo: juego jugable sin crashes en desktop y Android.*
+## ~~Fase 0~~ — Prototipo base (~25 h) — ✅ COMPLETADA
+
+*Objetivo cumplido: juego jugable en desktop con biomas, SFX, controles táctiles y Game Over.*  
+*Pendiente manual: exportación y verificación en dispositivo Android físico.*
 
 ### Infraestructura
 - [x] Repositorio GitHub con `.gitignore` Godot
