@@ -14,11 +14,13 @@
 
 | TD-006 | `Player.tscn` y `Game.tscn` en `scenes/` raíz en lugar de `scenes/game/` | Creadas antes de definir la estructura de subdirectorios | Al añadir la segunda escena de juego; mover y actualizar rutas en `.tscn` |
 | TD-007 | Sprite del murciélago es un rectángulo CYAN generado por código | No hay arte todavía | Al recibir el primer sprite sheet; sustituir `_setup_placeholder()` en `Player.gd` |
-| ~~TD-008~~ | ~~`LOOP_WIDTH` hardcodeado en `Player.gd`~~ | **Cerrado** — eliminado al implementar `SpawnManager` en Fase 2 | — |
+| TD-009 | `DEBUG_MODE = true` en `GameManager.gd` | Necesario para desarrollo; si se publica con true, D/R son accesibles en producción | Antes del primer build de release; cambiar a `false` |
 
 ## Deuda pagada
 
-*(Ninguna todavía.)*
+| ID | Descripción | Cerrada cuando |
+|---|---|---|
+| TD-008 | `LOOP_WIDTH` hardcodeado en `Player.gd` | Eliminado al implementar `SpawnManager` (Fase 2) |
 
 ## Regla de trabajo
 

@@ -9,14 +9,14 @@ Echo Bat se estructura en subsistemas con responsabilidades bien delimitadas. La
 │                      Game.tscn                           │
 │                                                          │
 │  ┌────────────┐  ┌──────────────┐  ┌─────────────────┐  │
-│  │   Player   │  │ BiomeGen     │  │   HUD / UI      │  │
-│  │  (Bat)     │  │ (nivel proc) │  │                 │  │
+│  │   Player   │  │ SpawnManager │  │   HUD / UI      │  │
+│  │  (Bat)     │  │ (nivel proc) │  │   (pendiente)   │  │
 │  └────────────┘  └──────────────┘  └─────────────────┘  │
 │        │                │                  │             │
 │        └────────────── EventBus ───────────┘             │
 │                                                          │
-│  Autoloads: GameManager · AudioManager                   │
-│             EconomyManager · EventBus                    │
+│  Autoloads: GameManager · AudioManager (pendiente)       │
+│             EconomyManager (pendiente) · EventBus (pend) │
 └──────────────────────────────────────────────────────────┘
                            │
           ┌────────────────┼────────────────┐
@@ -34,29 +34,41 @@ Echo Bat se estructura en subsistemas con responsabilidades bien delimitadas. La
 **Script**: `scripts/player/Player.gd` *(implementado)*
 
 Responsabilidades:
-- Movimiento automático horizontal (`SPEED = 400` px/s).
+- Movimiento horizontal automático a `GameManager.get_speed()` px/s (base 400, cap 550).
 - Gravedad (`GRAVITY = 1800` px/s²) y salto (`JUMP_VELOCITY = -600` px/s).
-- Salto activado por `Space` (action `jump`) o toque en el 60% derecho de pantalla.
-- Bucle de prueba: al superar `LOOP_WIDTH = 1600` px reaparece por la izquierda (se elimina cuando haya generación de nivel real).
-- Sprite placeholder: rectángulo CYAN generado por código en `_ready()` hasta tener el arte.
-- *(Pendiente)* Emisión de onda de sonido, colisiones con obstáculos/cristales, habilidades de vuelo.
+- Input: `Space` / toque 60% derecho → salto; `Enter` / toque 40% izquierdo → onda.
+- Onda de sonido: instancia `SoundWave.tscn`, cooldown 1 s, señal `wave_emitted`.
+- Muerte (`die()`): contacto con grupo `"obstacle"`, `is_on_floor()` (suelo), o `is_on_ceiling()` (techo).
+- Tracking de distancia en metros (`distance_meters`); llama `GameManager.update_distance()` cada frame.
+- Sprite placeholder: rectángulo CYAN hasta recibir el arte definitivo.
 
-Señales previstas: `player_died`, `crystal_collected(amount)`, `wave_emitted`.
+Señales emitidas: `player_died(distance)`, `wave_emitted`.
 
-### 2. Generación de biomas (BiomeGenerator)
+### 2. Generación procedural (SpawnManager)
 
-**Escena**: `scenes/game/BiomeGenerator.tscn`  
-**Script**: `scripts/level/BiomeGenerator.gd`
+**Script**: `scripts/level/SpawnManager.gd` *(implementado)*  
+*(Creado dinámicamente por `Game.gd`, no tiene escena propia)*
 
 Responsabilidades:
-- Generación procedural de secciones de bioma al vuelo (pooling de nodos para evitar instanciación en caliente).
-- Encadenamiento infinito de los 5 biomas en bucle con dificultad creciente por ciclo.
-- Spawn de obstáculos según el perfil de dificultad del bioma activo.
-- Despawn y reciclado de secciones que salen del viewport.
+- Spawn de pares de estalactitas (arriba + abajo) siempre delante de la cámara.
+- Posición vertical del gap aleatoria entre límites seguros (margen 50 px de techo/suelo).
+- Lee parámetros de bioma de `GameManager.get_biome_params()` cada frame → transición de bioma automática.
+- Despawn de pares al quedar fuera del borde izquierdo de la cámara.
 
-Biomas en orden de ciclo: **Cueva → Bosque → Ruinas → Tormenta → Vacío** → (repite).
+Biomas en orden de ciclo (gap px / spacing px):  
+**La Entrada** (210/400) → **La Penumbra** (190/380) → **La Catarata** (170/360) → **Las Agujas** (150/340) → **El Núcleo** (130/320) → (repite).
 
-Los parámetros de dificultad por ciclo se cargan desde Remote Config vía `RemoteConfigService.gd`.
+### 2b. GameManager (autoload) *(implementado)*
+
+**Script**: `scripts/core/GameManager.gd`
+
+Responsabilidades:
+- Estado global: `PLAYING` / `GAME_OVER`.
+- Tracking de bioma actual y ciclo por distancia (1000 m por bioma, 5 biomas por ciclo).
+- Velocidad dinámica: `BASE_SPEED * 1.1^(cycle-1)`, cap 550 px/s.
+- Récord persistido en `user://record.dat`.
+- Modo debug: overlay (CanvasLayer) con bioma/distancia/velocidad que persiste entre escenas. `R` lo muestra/oculta en cualquier escena.
+- **`DEBUG_MODE = true`** → cambiar a `false` antes de publicar.
 
 ### 3. Obstáculos
 
