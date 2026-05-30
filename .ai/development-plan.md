@@ -13,7 +13,7 @@ Extraído del GDD v4.0 (mayo 2025). Referencia completa: `.ai/GDD_Echo_Bat_v4.do
 - [x] Repositorio GitHub con `.gitignore` Godot
 - [x] Estructura de carpetas del proyecto (`scenes/`, `scripts/`, `assets/`, `addons/`)
 - [x] Documentación `.ai/` completa (8 archivos según estándar corporativo)
-- [x] `project.godot`: viewport 1280×720, escena main, action `jump`
+- [x] `project.godot`: viewport 1280×720, escena main, actions `jump` y `wave`, autoload `GameManager`
 
 ### Escenas base
 - [x] `scenes/Game.tscn` — Node2D + Camera2D + Player + Ground
@@ -25,8 +25,8 @@ Extraído del GDD v4.0 (mayo 2025). Referencia completa: `.ai/GDD_Echo_Bat_v4.do
 - [x] Salto: impulso vertical (−600 px/s)
 - [x] Input teclado: `Space` → salto (action `jump` en `project.godot`)
 - [x] Input táctil: toque en el 60% derecho → salto
-- [ ] Input teclado: `Tab` / `Enter` → onda de sonido
-- [ ] Input táctil: toque en el 40% izquierdo → onda de sonido
+- [x] Input teclado: `Enter` → onda de sonido (action `wave`, physical_keycode 4194309)
+- [x] Input táctil: toque en el 40% izquierdo → onda de sonido
 
 ### Cámara
 - [x] Seguimiento horizontal: 300 px por delante del jugador
@@ -35,24 +35,24 @@ Extraído del GDD v4.0 (mayo 2025). Referencia completa: `.ai/GDD_Echo_Bat_v4.do
 - [x] Clamp superior: `camera.y >= 0` (nunca muestra por encima del techo)
 
 ### Mecánica de onda de sonido (básica)
-- [ ] `SoundWave.tscn` + `scripts/player/SoundWave.gd`: proyectil que sale del murciélago
-- [ ] Dirección: hacia la derecha a velocidad configurable (~400 px/s inicial)
-- [ ] Cooldown entre ondas (~1 s)
-- [ ] Visual placeholder (círculo blanco semitransparente)
+- [x] `scenes/SoundWave.tscn` + `scripts/player/SoundWave.gd`: proyectil que sale del murciélago
+- [x] Dirección: hacia la derecha a 800 px/s, se destruye a los 900 px de distancia
+- [x] Cooldown entre ondas (1 s, gestionado en `Player.gd`)
+- [x] Visual placeholder (círculo degradado blanco semitransparente, 32×32 px)
 - [ ] SFX al lanzar (usar `scream.wav` del prototipo convertido a OGG)
-- [ ] Señal `wave_emitted` en `Player.gd`
+- [x] Señal `wave_emitted` en `Player.gd`
 
 ### Obstáculos y colisión
-- [ ] Sección de prueba estática con estalactitas (StaticBody2D + sprite placeholder)
-- [ ] Spawn de sección repetida para testing sin nivel generado
-- [ ] Hitbox del murciélago detecta obstáculos → señal `player_died`
-- [ ] Al morir: detener movimiento y gravedad del murciélago
+- [x] Sección de prueba: 3 pares de estalactitas en `Game.gd` (Polygon2D marrón, gap 210 px)
+- [x] Spawn de sección repetida para testing vía bucle de wrap en `Player.gd`
+- [x] Hitbox del murciélago detecta grupo `obstacle` → señal `player_died(distance)`
+- [x] Al morir: `Player.die()` detiene física, input y emite señal
 
 ### Game Over y reinicio
-- [ ] `scenes/ui/GameOver.tscn` — pantalla mínima: distancia recorrida + botón Reintentar
-- [ ] `GameManager.gd` (autoload): estados `PLAYING` / `GAME_OVER`
-- [ ] Reinicio: recargar `Game.tscn` (sin perder el récord de la sesión)
-- [ ] Mostrar distancia recorrida en metros en Game Over
+- [x] `scenes/ui/GameOver.tscn` + `scripts/ui/GameOver.gd` — distancia, récord, botón Reintentar
+- [x] `scripts/core/GameManager.gd` (autoload): estados `PLAYING` / `GAME_OVER`, récord en disco
+- [x] Reinicio: `GameManager.start_game()` recarga `Game.tscn`
+- [x] Mostrar distancia en metros y récord histórico en Game Over
 
 ### Exportación Android básica
 - [ ] Plantilla de exportación Android configurada en el editor
