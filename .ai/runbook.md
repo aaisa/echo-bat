@@ -9,8 +9,8 @@
 ## Ejecutar en escritorio (desarrollo rápido)
 
 - Pulsar **F5** (o botón Play) en el editor.
-- La escena de entrada es `scenes/Main.tscn`. Si el editor pide escena por defecto, seleccionarla en **Project → Project Settings → Application → Run → Main Scene**.
-- En escritorio el input de toque se mapea a clic izquierdo o `Space`. Ver `scripts/core/InputMapper.gd`.
+- La escena de entrada es `scenes/Game.tscn` (ya configurada como main scene en `project.godot`).
+- En escritorio el salto se activa con `Space` (action `jump` definida en `project.godot`). El toque se simula con clic en el 60% derecho de la ventana.
 
 ## Ejecutar en Android (dispositivo físico)
 

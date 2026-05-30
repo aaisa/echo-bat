@@ -12,6 +12,10 @@
 | TD-004 | Plugins de Firebase/AdMob sin versión fijada | Stack aún por decidir; los plugins cambian de API entre versiones de Godot | Al elegir e instalar los plugins; fijar versión exacta en `stack.md` |
 | TD-005 | Sin sistema de tests (GUT no instalado) | Sin cobertura de lógica de economía ni generación procedural | Al completar el núcleo jugable; instalar GUT y crear `tests/` |
 
+| TD-006 | `Player.tscn` y `Game.tscn` en `scenes/` raíz en lugar de `scenes/game/` | Creadas antes de definir la estructura de subdirectorios | Al añadir la segunda escena de juego; mover y actualizar rutas en `.tscn` |
+| TD-007 | Sprite del murciélago es un rectángulo CYAN generado por código | No hay arte todavía | Al recibir el primer sprite sheet; sustituir `_setup_placeholder()` en `Player.gd` |
+| TD-008 | `LOOP_WIDTH = 1600` hardcodeado en `Player.gd` para el bucle de prueba | Sin generación de nivel real todavía | Al implementar `BiomeGenerator`; eliminar `_wrap_horizontal()` de `Player.gd` |
+
 ## Deuda pagada
 
 *(Ninguna todavía.)*

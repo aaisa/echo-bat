@@ -7,8 +7,8 @@ Endless runner 2D en Godot 4 / GDScript. Un murciélago avanza automáticamente 
 | Campo | Valor |
 |---|---|
 | Propósito | Juego móvil (Android) free-to-play con monetización por anuncios e IAP |
-| Entrypoint de escena | `scenes/Main.tscn` |
-| Entrypoint de script | `scripts/core/Main.gd` |
+| Entrypoint de escena | `scenes/Game.tscn` |
+| Entrypoint de script | `scripts/core/Game.gd` |
 | Inputs del jugador | Toque / espacio → salto; segundo toque → onda de sonido |
 | Outputs del sistema | Puntuación, Cristales de Eco, progresión de biomas |
 | Package | `com.echobat.game` |

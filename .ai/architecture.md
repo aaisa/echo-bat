@@ -6,7 +6,7 @@ Echo Bat se estructura en subsistemas con responsabilidades bien delimitadas. La
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                      Main.tscn                           │
+│                      Game.tscn                           │
 │                                                          │
 │  ┌────────────┐  ┌──────────────┐  ┌─────────────────┐  │
 │  │   Player   │  │ BiomeGen     │  │   HUD / UI      │  │
@@ -30,17 +30,18 @@ Echo Bat se estructura en subsistemas con responsabilidades bien delimitadas. La
 
 ### 1. Player (Bat)
 
-**Escena**: `scenes/game/Player.tscn`  
-**Script**: `scripts/player/Player.gd`
+**Escena**: `scenes/Player.tscn` *(implementado)*  
+**Script**: `scripts/player/Player.gd` *(implementado)*
 
 Responsabilidades:
-- Movimiento automático horizontal (velocidad constante con aceleración por ciclo).
-- Salto vertical: impulso físico con gravedad; un salto en el aire máximo (configurable vía Remote Config).
-- Emisión de **onda de sonido**: activa `SoundWave.tscn`, que se expande radialmente e ilumina obstáculos durante N segundos.
-- Detección de colisiones con obstáculos (muerte) y cristales (recolección).
-- Gestión de las 2 habilidades de vuelo equipadas (patrón Strategy).
+- Movimiento automático horizontal (`SPEED = 400` px/s).
+- Gravedad (`GRAVITY = 1800` px/s²) y salto (`JUMP_VELOCITY = -600` px/s).
+- Salto activado por `Space` (action `jump`) o toque en el 60% derecho de pantalla.
+- Bucle de prueba: al superar `LOOP_WIDTH = 1600` px reaparece por la izquierda (se elimina cuando haya generación de nivel real).
+- Sprite placeholder: rectángulo CYAN generado por código en `_ready()` hasta tener el arte.
+- *(Pendiente)* Emisión de onda de sonido, colisiones con obstáculos/cristales, habilidades de vuelo.
 
-Señales emitidas: `player_died`, `crystal_collected(amount)`, `wave_emitted`.
+Señales previstas: `player_died`, `crystal_collected(amount)`, `wave_emitted`.
 
 ### 2. Generación de biomas (BiomeGenerator)
 
@@ -126,11 +127,20 @@ El jugador equipa hasta **2 habilidades** de un catálogo de 10, elegidas en `Sk
 
 Ejemplos del catálogo: doble salto, onda de sonido ampliada, escudo de un golpe, velocidad reducida temporal, atracción magnética de cristales.
 
+## Cámara (Game.gd) *(implementado)*
+
+`Game.gd` gestiona la `Camera2D` de `Game.tscn` directamente (no usa el follow built-in de Godot):
+
+- **Horizontal**: `camera.x = player.x + 300` px (adelanto fijo, sin suavizado).
+- **Vertical — zona muerta**: el 32% central de la pantalla (±115 px con viewport 720 h). La cámara no se mueve mientras el jugador esté dentro de esa franja.
+- **Vertical — seguimiento**: al salir de la zona muerta, la cámara se desplaza a **250 px/s** con `move_toward` (sin overshoot).
+- **Clamp**: `camera.y >= 0` — nunca muestra contenido por encima del techo del nivel.
+
 ## Flujo de una partida
 
 ```
-MainMenu
-  → [Play] → GameManager.start_game()
+MainMenu (pendiente)
+  → [Play] → GameManager.start_game() (pendiente)
     → BiomeGenerator inicia generación de secciones
     → Player se activa y empieza a avanzar
     → HUD se actualiza por señales de EventBus
