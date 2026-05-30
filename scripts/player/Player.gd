@@ -25,10 +25,42 @@ var _sfx_jump: AudioStreamPlayer
 var _sfx_die: AudioStreamPlayer
 var _sfx_wave: AudioStreamPlayer
 
+@onready var _anim: Node = $AnimationManager
+
 func _ready() -> void:
 	_screen_size = get_viewport().get_visible_rect().size
 	_setup_placeholder()
 	_setup_audio()
+	_anim.play_fly()
+
+# --- Placeholder visual ---
+# Sustituir por SpriteFrames con los assets reales cuando estén disponibles.
+# bat_fly.png → 8 frames, 12 fps, loop
+# bat_die.png → 6 frames, 10 fps, sin loop
+func _setup_placeholder() -> void:
+	var img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
+	img.fill(Color.CYAN)
+	var tex := ImageTexture.create_from_image(img)
+
+	var frames := SpriteFrames.new()
+	if frames.has_animation("default"):
+		frames.remove_animation("default")
+
+	frames.add_animation("fly")
+	frames.set_animation_speed("fly", 12.0)
+	frames.set_animation_loop("fly", true)
+	for _i in 8:
+		frames.add_frame("fly", tex)
+
+	frames.add_animation("die")
+	frames.set_animation_speed("die", 10.0)
+	frames.set_animation_loop("die", false)
+	for _i in 6:
+		frames.add_frame("die", tex)
+
+	$AnimatedSprite2D.sprite_frames = frames
+
+# --- Audio ---
 
 func _setup_audio() -> void:
 	_sfx_jump = _make_sfx("res://assets/audio/flap.wav", 1.0)
@@ -43,10 +75,7 @@ func _make_sfx(path: String, volume_linear: float) -> AudioStreamPlayer:
 	add_child(p)
 	return p
 
-func _setup_placeholder() -> void:
-	var img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
-	img.fill(Color.CYAN)
-	$Sprite2D.texture = ImageTexture.create_from_image(img)
+# --- Física ---
 
 func _physics_process(delta: float) -> void:
 	if not _alive:
@@ -76,6 +105,8 @@ func _check_obstacle_collisions() -> void:
 			return
 	if is_on_floor() or is_on_ceiling():
 		die()
+
+# --- Input ---
 
 func _input(event: InputEvent) -> void:
 	if not _alive:
@@ -110,6 +141,7 @@ func die() -> void:
 	_alive = false
 	velocity = Vector2.ZERO
 	_sfx_die.play()
+	_anim.play_die()
 	set_physics_process(false)
 	set_process_input(false)
 	player_died.emit(distance_meters)
