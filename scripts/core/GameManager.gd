@@ -15,6 +15,8 @@ const BIOME_DURATION_METERS: float = 1000.0
 const BASE_SPEED: float = 400.0
 const MAX_SPEED: float = 550.0
 const CYCLE_SPEED_BONUS: float = 0.10
+# Poner a false antes de publicar
+const DEBUG_MODE: bool = true
 
 var state: GameState = GameState.PLAYING
 var last_distance: float = 0.0
