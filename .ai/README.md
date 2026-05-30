@@ -23,10 +23,28 @@ Endless runner 2D en Godot 4 / GDScript. Un murciélago avanza automáticamente 
 5. **Nombres en inglés, comentarios en español.** Variables, funciones, señales y archivos en inglés. Los comentarios explicativos en español.
 6. **Un script por escena.** Cada `.tscn` tiene su `.gd` con el mismo nombre base. No se reutiliza un script en escenas de naturaleza distinta.
 
+## Protocolo de trabajo autónomo
+
+Antes de cualquier sesión de trabajo:
+1. Leer este archivo para las reglas duras y el contexto.
+2. Leer [`development-plan.md`](development-plan.md) para saber qué toca hacer.
+3. Coger la siguiente tarea pendiente `[ ]` en la fase activa y ejecutarla.
+
+Al terminar cada tarea:
+- Marcarla como `[x]` en `development-plan.md`.
+- Actualizar los docs `.ai/` afectados (architecture, tech-debt, etc.).
+- Hacer commit con mensaje descriptivo.
+
+Al terminar cada sesión, reportar al usuario:
+- Qué se ha hecho (tareas completadas).
+- Qué está pendiente (próximas tareas).
+- Qué necesita probar en Godot.
+
 ## Documentación disponible
 
 | Archivo | Qué contiene |
 |---|---|
+| [`development-plan.md`](development-plan.md) | Plan de trabajo por fases con checkboxes (fuente de verdad del estado) |
 | [`overview.md`](overview.md) | Para qué existe el juego y a quién sirve |
 | [`stack.md`](stack.md) | Motor, plugins, servicios externos y versiones |
 | [`runbook.md`](runbook.md) | Cómo abrir, ejecutar, exportar y desplegar |
@@ -37,4 +55,5 @@ Endless runner 2D en Godot 4 / GDScript. Un murciélago avanza automáticamente 
 
 ## Extensiones
 
-*(Ninguna todavía. Se añadirán aquí cuando el proyecto las necesite.)*
+- [`development-plan.md`](development-plan.md) — plan de trabajo por fases extraído del GDD. Fuente de verdad del estado de desarrollo.
+- [`GDD_Echo_Bat_v4.docx`](GDD_Echo_Bat_v4.docx) — Game Design Document completo (referencia de diseño, no modificar).
