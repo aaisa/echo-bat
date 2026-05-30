@@ -11,6 +11,8 @@ const WAVE_COOLDOWN: float = 1.0
 const PIXELS_PER_METER: float = 100.0
 # Toque 60% derecho → salto | 40% izquierdo → onda
 const JUMP_TOUCH_X_RATIO: float = 0.4
+# Mitad de CollisionShape2D (60 px de alto) — para detectar techo
+const PLAYER_HALF_HEIGHT: float = 30.0
 
 const WAVE_SCENE := preload("res://scenes/SoundWave.tscn")
 
@@ -54,6 +56,8 @@ func _check_obstacle_collisions() -> void:
 		if get_slide_collision(i).get_collider().is_in_group("obstacle"):
 			die()
 			return
+	if is_on_floor() or is_on_ceiling():
+		die()
 
 func _input(event: InputEvent) -> void:
 	if not _alive:
