@@ -25,8 +25,22 @@ var record_distance: float = 0.0
 var current_biome: int = 0
 var cycle: int = 1
 
+# Debug overlay — vive aquí para persistir entre cambios de escena
+var _debug_canvas: CanvasLayer
+var _debug_label: Label
+
 func _ready() -> void:
 	_load_record()
+	if DEBUG_MODE:
+		_setup_debug_overlay()
+
+# R funciona en cualquier escena porque GameManager siempre está en el árbol
+func _unhandled_input(event: InputEvent) -> void:
+	if not DEBUG_MODE:
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_R:
+			_debug_canvas.visible = not _debug_canvas.visible
 
 func start_game() -> void:
 	state = GameState.PLAYING
@@ -59,6 +73,32 @@ func get_biome_name() -> String:
 
 func get_speed() -> float:
 	return minf(BASE_SPEED * pow(1.0 + CYCLE_SPEED_BONUS, cycle - 1), MAX_SPEED)
+
+# Llamado cada frame desde Game.gd mientras hay partida activa
+func debug_update(distance: float, speed: float) -> void:
+	if not DEBUG_MODE or not _debug_canvas.visible:
+		return
+	_debug_label.text = (
+		"[DEBUG]  D = +1000 m  |  R = ocultar\n"
+		+ "Bioma %d — %s\n" % [current_biome + 1, get_biome_name()]
+		+ "Distancia: %.0f m\n" % distance
+		+ "Velocidad: %.0f px/s\n" % speed
+		+ "Ciclo: %d" % cycle
+	)
+
+func _setup_debug_overlay() -> void:
+	_debug_canvas = CanvasLayer.new()
+	_debug_canvas.layer = 100
+	_debug_canvas.visible = false
+	add_child(_debug_canvas)
+
+	var panel := PanelContainer.new()
+	panel.position = Vector2(8.0, 8.0)
+	_debug_canvas.add_child(panel)
+
+	_debug_label = Label.new()
+	_debug_label.add_theme_color_override("font_color", Color.YELLOW_GREEN)
+	panel.add_child(_debug_label)
 
 func _save_record() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
