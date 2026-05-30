@@ -88,26 +88,25 @@ Extraído del GDD v4.0 (mayo 2025). Referencia completa: `.ai/GDD_Echo_Bat_v4.do
 
 ## Fase 2 — Endless procedural (~25 h)
 
-### Generador de biomas
-- [ ] `BiomeGenerator.gd` + `BiomeSection.gd`: generación procedural de secciones
-- [ ] Object pooling: spawn delante del viewport, despawn detrás
-- [ ] Bioma 1 — La Entrada: gap 3.5 bloques, velocidad base 400 px/s
+### Generador de obstáculos
+- [x] `SpawnManager.gd`: generación procedural de pares de estalactitas
+- [x] Spawn delante de la cámara (1 spacing más allá del borde derecho), despawn detrás
+- [x] Gap vertical aleatorio dentro de límites seguros (margen 50 px de techo/suelo)
+- [x] Bioma 1 — La Entrada: gap 210 px, spacing 400 px
 
-### Sistema de ciclos (5 biomas → reinicia más rápido)
-- [ ] Orden: La Entrada → La Penumbra → La Catarata → Las Agujas → El Núcleo
-- [ ] Al completar ciclo: incrementar velocidad y densidad según tabla del GDD
-  - Ciclo 1: 400 px/s, densidad base, gap 3.5
-  - Ciclo 2: 440 px/s, +15% densidad, gap 3
-  - Ciclo 3: 480 px/s, +30%, gap 2.5
-  - Ciclo 4: 520 px/s, +45%, gap 2
-  - Ciclo 5+: 550 px/s (cap), máxima densidad, gap 2 (cap)
-- [ ] Eliminar `LOOP_WIDTH` de `Player.gd` (TD-008) al activar este sistema
+### Sistema de biomas y ciclos
+- [x] 5 biomas con parámetros propios en `GameManager.BIOME_DATA`
+- [x] Orden: La Entrada → La Penumbra → La Catarata → Las Agujas → El Núcleo (y repite)
+- [x] Cada bioma dura 1000 m; `GameManager.update_distance()` calcula bioma activo cada frame
+- [x] Al completar ciclo: velocidad +10% (cap 550 px/s) via `GameManager.get_speed()`
+- [x] Eliminado `LOOP_WIDTH` de `Player.gd` (TD-008 cerrado)
 
 ### Sistema de puntuación
-- [ ] 1 punto por metro recorrido (usar distancia en `game_unit` = px/400)
+- [x] 1 punto por metro recorrido (distancia en metros = puntuación base; 100 px = 1 m)
 - [ ] Bonus al cruzar umbral de bioma: +200/+400/+700/+1100/+2000 pts
-- [ ] Récord local persistido con `FileAccess` (SaveGame de Godot)
-- [ ] HUD mínimo: contador de distancia en tiempo real
+- [x] Récord local persistido con `FileAccess` en `user://record.dat`
+- [x] Mostrar distancia, récord y bioma actual en Game Over
+- [ ] HUD en tiempo real: contador de distancia durante la partida
 
 ### Cristales de Eco
 - [ ] Spawn de cristales en el nivel (interleaved con obstáculos)

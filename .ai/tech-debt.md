@@ -14,7 +14,7 @@
 
 | TD-006 | `Player.tscn` y `Game.tscn` en `scenes/` raíz en lugar de `scenes/game/` | Creadas antes de definir la estructura de subdirectorios | Al añadir la segunda escena de juego; mover y actualizar rutas en `.tscn` |
 | TD-007 | Sprite del murciélago es un rectángulo CYAN generado por código | No hay arte todavía | Al recibir el primer sprite sheet; sustituir `_setup_placeholder()` en `Player.gd` |
-| TD-008 | `LOOP_WIDTH = 1600` hardcodeado en `Player.gd` para el bucle de prueba | Sin generación de nivel real todavía | Al implementar `BiomeGenerator`; eliminar `_wrap_horizontal()` de `Player.gd` |
+| ~~TD-008~~ | ~~`LOOP_WIDTH` hardcodeado en `Player.gd`~~ | **Cerrado** — eliminado al implementar `SpawnManager` en Fase 2 | — |
 
 ## Deuda pagada
 

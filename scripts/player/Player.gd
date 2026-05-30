@@ -4,16 +4,13 @@ extends CharacterBody2D
 signal player_died(distance: float)
 signal wave_emitted
 
-const SPEED: float = 400.0
 const JUMP_VELOCITY: float = -600.0
 const GRAVITY: float = 1800.0
 const WAVE_COOLDOWN: float = 1.0
-# Escala: 100 px = 1 metro (4 m/s, igual que el prototipo original a 4 u/s)
+# Escala: 100 px = 1 metro (a velocidad base de 400 px/s → 4 m/s)
 const PIXELS_PER_METER: float = 100.0
 # Toque 60% derecho → salto | 40% izquierdo → onda
 const JUMP_TOUCH_X_RATIO: float = 0.4
-# Bucle de prueba — se elimina en Fase 2 al activar BiomeGenerator (TD-008)
-const LOOP_WIDTH: float = 1600.0
 
 const WAVE_SCENE := preload("res://scenes/SoundWave.tscn")
 
@@ -36,13 +33,13 @@ func _physics_process(delta: float) -> void:
 		return
 	_apply_gravity(delta)
 	_tick_wave_cooldown(delta)
-	velocity.x = SPEED
+	velocity.x = GameManager.get_speed()
 	move_and_slide()
 	_check_obstacle_collisions()
 	if not _alive:
 		return
-	distance_meters += SPEED * delta / PIXELS_PER_METER
-	_wrap_horizontal()
+	distance_meters += GameManager.get_speed() * delta / PIXELS_PER_METER
+	GameManager.update_distance(distance_meters)
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
@@ -91,7 +88,3 @@ func die() -> void:
 	set_physics_process(false)
 	set_process_input(false)
 	player_died.emit(distance_meters)
-
-func _wrap_horizontal() -> void:
-	if global_position.x > LOOP_WIDTH:
-		global_position.x -= LOOP_WIDTH
