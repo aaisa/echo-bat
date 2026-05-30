@@ -21,9 +21,27 @@ var _wave_cooldown_timer: float = 0.0
 var _screen_size: Vector2
 var distance_meters: float = 0.0
 
+var _sfx_jump: AudioStreamPlayer
+var _sfx_die: AudioStreamPlayer
+var _sfx_wave: AudioStreamPlayer
+
 func _ready() -> void:
 	_screen_size = get_viewport().get_visible_rect().size
 	_setup_placeholder()
+	_setup_audio()
+
+func _setup_audio() -> void:
+	_sfx_jump = _make_sfx("res://assets/audio/flap.wav", 1.0)
+	_sfx_die  = _make_sfx("res://assets/audio/golpe.wav", 1.0)
+	_sfx_wave = _make_sfx("res://assets/audio/scream.wav", 0.1)
+
+func _make_sfx(path: String, volume_linear: float) -> AudioStreamPlayer:
+	var p := AudioStreamPlayer.new()
+	p.volume_db = linear_to_db(volume_linear)
+	if ResourceLoader.exists(path):
+		p.stream = load(path)
+	add_child(p)
+	return p
 
 func _setup_placeholder() -> void:
 	var img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
@@ -74,6 +92,7 @@ func _input(event: InputEvent) -> void:
 
 func _jump() -> void:
 	velocity.y = JUMP_VELOCITY
+	_sfx_jump.play()
 
 func _try_emit_wave() -> void:
 	if _wave_cooldown_timer > 0.0:
@@ -82,6 +101,7 @@ func _try_emit_wave() -> void:
 	var wave := WAVE_SCENE.instantiate() as Area2D
 	wave.global_position = global_position
 	get_parent().add_child(wave)
+	_sfx_wave.play()
 	wave_emitted.emit()
 
 func die() -> void:
@@ -89,6 +109,7 @@ func die() -> void:
 		return
 	_alive = false
 	velocity = Vector2.ZERO
+	_sfx_die.play()
 	set_physics_process(false)
 	set_process_input(false)
 	player_died.emit(distance_meters)

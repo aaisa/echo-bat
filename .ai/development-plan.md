@@ -39,7 +39,7 @@ Extraído del GDD v4.0 (mayo 2025). Referencia completa: `.ai/GDD_Echo_Bat_v4.do
 - [x] Dirección: hacia la derecha a 800 px/s, se destruye a los 900 px de distancia
 - [x] Cooldown entre ondas (1 s, gestionado en `Player.gd`)
 - [x] Visual placeholder (círculo degradado blanco semitransparente, 32×32 px)
-- [ ] SFX al lanzar (usar `scream.wav` del prototipo convertido a OGG)
+- [x] SFX al lanzar — `scream.wav` placeholder (WAV silencioso, vol 0.1); reemplazar con el .wav real del prototipo
 - [x] Señal `wave_emitted` en `Player.gd`
 
 ### Obstáculos y colisión
@@ -55,8 +55,10 @@ Extraído del GDD v4.0 (mayo 2025). Referencia completa: `.ai/GDD_Echo_Bat_v4.do
 - [x] Mostrar distancia en metros y récord histórico en Game Over
 
 ### Exportación Android básica
-- [ ] Plantilla de exportación Android configurada en el editor
-- [ ] APK de debug exportable y ejecutable en dispositivo físico
+- [x] Input táctil implementado en código (`InputEventScreenTouch`, split 60/40)
+- [x] `emulate_touch_from_mouse=true` en `project.godot` para testing en PC
+- [ ] Plantilla de exportación Android configurada en el editor (manual)
+- [ ] APK de debug exportable y ejecutable en dispositivo físico (manual)
 - [ ] Input táctil verificado en dispositivo real
 
 ---
