@@ -8,7 +8,7 @@ extends Node
 
 @onready var _sprite: AnimatedSprite2D = $"../AnimatedSprite2D"
 
-var _tween: Tween
+var _die_tween: Tween
 var _current_anim: String = ""
 
 # Planeando/cayendo: animación lenta con alas extendidas
@@ -29,22 +29,15 @@ func play_flap() -> void:
 
 # Muerte: detiene animación + rotación + caída fuera de pantalla en 0.5 s
 func play_die() -> void:
-	_stop_tween()
 	_current_anim = "die"
 	if _sprite.sprite_frames != null:
 		_sprite.stop()
 		_sprite.play("die")
-	_tween = create_tween().set_parallel()
-	_tween.tween_property(_sprite, "rotation_degrees", 180.0, 0.5)
-	_tween.tween_property(_sprite, "position:y", 800.0, 0.5)
-
-# Impulso visual al saltar (no se usa, la animación flap ya proporciona feedback)
-func play_jump_impulse() -> void:
-	pass
+	if _die_tween != null and _die_tween.is_running():
+		_die_tween.kill()
+	_die_tween = create_tween().set_parallel()
+	_die_tween.tween_property(_sprite, "rotation_degrees", 180.0, 0.5)
+	_die_tween.tween_property(_sprite, "position:y", 800.0, 0.5)
 
 func is_die_finished() -> bool:
-	return _tween != null and not _tween.is_running()
-
-func _stop_tween() -> void:
-	if _tween != null and _tween.is_running():
-		_tween.kill()
+	return _die_tween != null and not _die_tween.is_running()

@@ -157,7 +157,6 @@ func _input(event: InputEvent) -> void:
 func _jump() -> void:
 	velocity.y = JUMP_VELOCITY
 	_sfx_jump.play()
-	_anim.play_jump_impulse()
 
 func _try_emit_wave() -> void:
 	if _wave_cooldown_timer > 0.0:
