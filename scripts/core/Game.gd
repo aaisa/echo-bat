@@ -6,6 +6,7 @@ const DEAD_ZONE_Y_RATIO: float = 0.32
 
 @onready var _camera: Camera2D = $Camera2D
 @onready var _player: Player = $Player
+@onready var _background: Node2D = $Background
 
 var _dead_zone_half: float
 var _spawn_manager  # SpawnManager — tipo resuelto por Godot al cargar el proyecto
@@ -20,6 +21,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_camera.global_position.x = _player.global_position.x + CAMERA_LEAD
 	_update_camera_y(delta)
+	_update_background()
 	if GameManager.DEBUG_MODE:
 		GameManager.debug_update(_player.distance_meters, GameManager.get_speed())
 
@@ -33,6 +35,12 @@ func _update_camera_y(delta: float) -> void:
 		cam_y = move_toward(cam_y, player_y - _dead_zone_half, CAMERA_Y_SPEED * delta)
 
 	_camera.global_position.y = maxf(cam_y, 0.0)
+
+func _update_background() -> void:
+	# ParallaxBackground necesita scroll_offset para seguir la cámara
+	var parallax_bg: ParallaxBackground = _background.get_node("ParallaxBackground")
+	if parallax_bg != null:
+		parallax_bg.scroll_offset = _camera.global_position
 
 # D solo funciona durante la partida (necesita al jugador)
 func _unhandled_input(event: InputEvent) -> void:
