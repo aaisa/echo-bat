@@ -31,32 +31,55 @@ func _ready() -> void:
 	_screen_size = get_viewport().get_visible_rect().size
 	_setup_placeholder()
 	_setup_audio()
-	_anim.play_fly()
+	_anim.play_glide()
 
-# --- Placeholder visual ---
-# Sustituir por SpriteFrames con los assets reales cuando estén disponibles.
-# bat_fly.png → 8 frames, 12 fps, loop
-# bat_die.png → 6 frames, 10 fps, sin loop
+# --- Sprite base ---
+# Spritesheet de 8 frames (2048×256 px) con dos animaciones según estado de vuelo:
+# - "glide": frames 0-1 (alas extendidas, planeando) a 4 fps
+# - "flap": frames 0-7 completos (aleteando) a 18 fps
 func _setup_placeholder() -> void:
-	var img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
-	img.fill(Color.CYAN)
-	var tex := ImageTexture.create_from_image(img)
+	const BAT_SHEET_PATH := "res://assets/sprites/player/bat_sheet.png"
+
+	var sheet: Texture2D
+	if ResourceLoader.exists(BAT_SHEET_PATH):
+		sheet = load(BAT_SHEET_PATH)
+	else:
+		# Fallback: placeholder CYAN si no existe el spritesheet
+		var img := Image.create(256, 256, false, Image.FORMAT_RGBA8)
+		img.fill(Color.CYAN)
+		sheet = ImageTexture.create_from_image(img)
 
 	var frames := SpriteFrames.new()
 	if frames.has_animation("default"):
 		frames.remove_animation("default")
 
-	frames.add_animation("fly")
-	frames.set_animation_speed("fly", 12.0)
-	frames.set_animation_loop("fly", true)
-	for _i in 8:
-		frames.add_frame("fly", tex)
+	# Animación "glide" (planeando/cayendo): solo frames 0-1 a 4 fps
+	frames.add_animation("glide")
+	frames.set_animation_loop("glide", true)
+	frames.set_animation_speed("glide", 4.0)
+	for i in range(2):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = sheet
+		atlas.region = Rect2(i * 256, 0, 256, 256)
+		frames.add_frame("glide", atlas)
 
+	# Animación "flap" (aleteando/subiendo): frames 0-7 completos a 18 fps
+	frames.add_animation("flap")
+	frames.set_animation_loop("flap", true)
+	frames.set_animation_speed("flap", 18.0)
+	for i in range(8):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = sheet
+		atlas.region = Rect2(i * 256, 0, 256, 256)
+		frames.add_frame("flap", atlas)
+
+	# Animación "die": usa solo el primer frame (sin animación)
 	frames.add_animation("die")
-	frames.set_animation_speed("die", 10.0)
 	frames.set_animation_loop("die", false)
-	for _i in 6:
-		frames.add_frame("die", tex)
+	var die_atlas := AtlasTexture.new()
+	die_atlas.atlas = sheet
+	die_atlas.region = Rect2(0, 0, 256, 256)
+	frames.add_frame("die", die_atlas)
 
 	$AnimatedSprite2D.sprite_frames = frames
 
@@ -82,6 +105,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_apply_gravity(delta)
 	_tick_wave_cooldown(delta)
+	_update_animation_state()
 	velocity.x = GameManager.get_speed()
 	move_and_slide()
 	_check_obstacle_collisions()
@@ -97,6 +121,15 @@ func _apply_gravity(delta: float) -> void:
 func _tick_wave_cooldown(delta: float) -> void:
 	if _wave_cooldown_timer > 0.0:
 		_wave_cooldown_timer -= delta
+
+func _update_animation_state() -> void:
+	# Cambiar animación según velocidad vertical:
+	# velocity.y < 0 → subiendo → "flap" (aleteo rápido)
+	# velocity.y >= 0 → cayendo/planeando → "glide" (alas extendidas)
+	if velocity.y < 0:
+		_anim.play_flap()
+	else:
+		_anim.play_glide()
 
 func _check_obstacle_collisions() -> void:
 	for i in get_slide_collision_count():
@@ -124,6 +157,7 @@ func _input(event: InputEvent) -> void:
 func _jump() -> void:
 	velocity.y = JUMP_VELOCITY
 	_sfx_jump.play()
+	_anim.play_jump_impulse()
 
 func _try_emit_wave() -> void:
 	if _wave_cooldown_timer > 0.0:
